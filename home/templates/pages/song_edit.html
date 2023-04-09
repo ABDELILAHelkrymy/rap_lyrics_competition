@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+{% load i18n static %}
+
+{% block title %} Home {% endblock title %}
+
+{% block overlay %}
+  <div class="min-height-300 bg-primary position-absolute w-100"></div>
+{% endblock overlay %}
+
+{% block content %}
+  <div class="container-fluid py-4">
+    
+    <div class="row">
+      <div class="col-md-7 mt-4">
+        <div class="card">
+          <div class="card-header pb-0 px-3">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="mb-0">Your Songs lyrics</h6>
+              </div>
+              <div class="col-6 text-end">
+                <button type="button" class="btn bg-gradient-dark mb-0" data-bs-toggle="modal" data-bs-target="#newSongsModal" data-bs-whatever="@mdo">Add New Song lyrics</button>
+              </div>
+              
+            </div>
+          </div>
+          <div class="card-body pt-4 p-3">
+
+              <form method="post">
+                {% csrf_token %}
+                {% for field in song_form %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">
+                            {{ error }}
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Save</button>
+              </form>
+            
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="modal-book">
+        <div class="modal-dialog">
+          <div class="modal-content"></div>
+        </div>
+      </div>
+    </div>
+    {% include 'includes/footer.html' %}
+  </div>
+
+  {% endblock content %}
