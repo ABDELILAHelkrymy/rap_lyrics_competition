@@ -22,7 +22,8 @@ urlpatterns = [
     path('rapper/', include('home.urls')),
     path("admin/", admin.site.urls),
     path("", include('admin_argon.urls')),
-    path("organizer/", include('organizer.urls'))
+    path("organizer/", include('organizer.urls')),
+    path("competition/", include('competition.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

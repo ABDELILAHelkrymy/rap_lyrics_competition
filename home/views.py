@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from admin_argon.forms import RegistrationForm
-from .forms import RapperRegisterForm, RapperProfileForm, SongForm
+from .forms import RapperRegisterForm, RapperProfileForm, SongForm, RecommendationForm
 from django.contrib.auth.models import User
-from .models import Rapper, Song
+from .models import Rapper, Song, Recommandations
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render, get_object_or_404
@@ -88,3 +88,26 @@ def rapperSongDelete(request, song_id):
     song = current_user.song_set.get(id=song_id)
     song.delete()
     return redirect('rapper-songs')
+
+def rappersProfileList(requetst):
+    rappers = Rapper.objects.all()
+    return render(requetst, 'pages/rappers-profile-list.html', {
+        'rappers': rappers
+        })
+
+def getRapper(request, pk):
+    rapper = get_object_or_404(Rapper, id=pk)
+    form = RecommendationForm()
+
+    if request.method == 'POST':
+        form = RecommendationForm(request.POST)
+        if form.is_valid():
+            recommendation = form.save(commit=False)
+            recommendation.rapper = request.user.rapper
+            recommendation.owner = rapper
+            recommendation.save()
+            return redirect('rapper-profile-view', pk=rapper.id)
+    return render(request, 'pages/rapper-profile-view.html', {
+        'rapper': rapper,
+        'form' : form
+        })

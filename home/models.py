@@ -14,15 +14,11 @@ class Rapper(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     awards = models.TextField(max_length=500, blank=True)
     trophies = models.TextField(max_length=500, blank=True)
-    links = models.TextField(max_length=500, blank=True)
-    recommendations = models.TextField(max_length=500, blank=True)
     profile_image = models.ImageField(
         blank=True, null=True, 
         upload_to = 'profiles/',
         default ='profiles/user-default.png')
-    social_github = models.CharField(max_length=200, blank=True, null=True)
     social_twitter = models.CharField(max_length=200, blank=True, null=True)
-    social_linkedin = models.CharField(max_length=200, blank=True, null=True)
     social_youtube = models.CharField(max_length=200, blank=True, null=True)
     social_website = models.CharField(max_length=200, blank=True, null=True)
     id = models.UUIDField(
@@ -39,6 +35,23 @@ class Rapper(models.Model):
         except:
             url = ''
         return url
+
+class Recommandations(models.Model):
+    owner = models.ForeignKey(Rapper, on_delete=models.CASCADE, related_name='given_recommendations')
+    rapper = models.ForeignKey(Rapper, on_delete=models.CASCADE, related_name='received_recommendations')
+    competition = models.ForeignKey('competition.CompetitionEntry', on_delete=models.CASCADE, related_name='recommendations_com', null=True)
+    recommandations = models.TextField(max_length=500, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    id = models.UUIDField(
+        default=uuid.uuid4, unique=True,
+        primary_key=True, editable=False)
+    
+    class Meta:
+        unique_together = [['owner', 'rapper']]
+
+    def __str__(self):
+        return self.recommandations
 
 
 class Song(models.Model):

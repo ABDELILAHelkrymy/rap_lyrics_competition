@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     "home.apps.HomeConfig",
     "organizer.apps.OrganizerConfig",
+    "competition.apps.CompetitionConfig",
 
     'crispy_forms',
 ]
