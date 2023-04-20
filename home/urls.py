@@ -11,5 +11,7 @@ urlpatterns = [
     path('rapper-song/<str:song_id>/', views.rapperSong, name='rapper-song'),
     path('edit-song/<str:song_id>/', views.rapperSongEdit, name='edit_song'),
     path('delete-song/<str:song_id>/', views.rapperSongDelete,name='delete_song'),
-    path('rappers-profile/', views.rappersProfileList, name='rappers-profile')
+    path('rappers-profile/', views.rappersProfileList, name='rappers-profile'),
+    path('rapper-login/', views.CustomLoginView.as_view(), name='rapper_login'),
+    path('rapper-logout/', views.user_logout_view_custom, name="logout_custom")
 ]

@@ -6,6 +6,13 @@ from .models import Rapper, Song, Recommandations
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import FormView
+from django.contrib.auth.views import LoginView
+from admin_argon.forms import RegistrationForm, LoginForm, UserPasswordResetForm, UserSetPasswordForm, UserPasswordChangeForm
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth import logout
 
 def index(request):
     return render(request, 'pages/dashboard.html')
@@ -111,3 +118,37 @@ def getRapper(request, pk):
         'rapper': rapper,
         'form' : form
         })
+
+def custom_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if request.user.is_staff:
+                return redirect('admin:index')
+            else:
+                return redirect('rapper-profile')
+        else:
+            messages.error(request, 'Invalid username or password')
+    return render(request, 'accounts/sign-in.html', {'form': LoginForm()})
+
+def user_logout_view_custom(request):
+  logout(request)
+  return redirect('rapper_login')
+
+class CustomLoginView(LoginView):
+    template_name = 'accounts/sign-in.html'
+    form_class = LoginForm
+
+    def get_success_url(self):
+        """
+        Determine the URL to redirect to after a successful login.
+        """
+        if self.request.user.is_staff:
+            # If the user is a staff member, redirect to the admin panel.
+            return reverse_lazy('admin:index')
+        else:
+            # Otherwise, redirect to the user's profile page.
+            return reverse_lazy('rapper-profile')
