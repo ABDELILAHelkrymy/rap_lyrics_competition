@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% load i18n static %}
 
-{% block title %} Songs {% endblock title %}
+{% block title %} Send message {% endblock title %}
 
 {% block overlay %}
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
@@ -15,16 +15,15 @@
         <div class="card-header pb-0 px-3">
           <div class="row">
             <div class="col-md-6">
-              <h6 class="mb-0">Your Songs lyrics</h6>
+              <h6 class="mb-0">Send a message to {{recipient.first_name}}</h6>
             </div>
-            
           </div>
         </div>
         <div class="card-body pt-4 p-3">
 
             <form method="post">
               {% csrf_token %}
-              {% for field in song_form %}
+              {% for field in form %}
                   <div class="mb-3">
                       {{ field.label_tag }}
                       {{ field }}

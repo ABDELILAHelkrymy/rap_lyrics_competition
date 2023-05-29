@@ -13,5 +13,8 @@ urlpatterns = [
     path('delete-song/<str:song_id>/', views.rapperSongDelete,name='delete_song'),
     path('rappers-profile/', views.rappersProfileList, name='rappers-profile'),
     path('rapper-login/', views.CustomLoginView.as_view(), name='rapper_login'),
-    path('rapper-logout/', views.user_logout_view_custom, name="logout_custom")
+    path('rapper-logout/', views.user_logout_view_custom, name="logout_custom"),
+    path('inbox/', views.inbox, name='rapper_inbox'),
+    path('inbox/<str:pk>/', views.viewMessage, name='single_message'),
+    path('send/<str:pk>/', views.createMessage, name="send-message"),
 ]

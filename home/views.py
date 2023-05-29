@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from admin_argon.forms import RegistrationForm
-from .forms import RapperRegisterForm, RapperProfileForm, SongForm, RecommendationForm
+from .forms import RapperRegisterForm, RapperProfileForm, SongForm, RecommendationForm, MessageForm
 from django.contrib.auth.models import User
-from .models import Rapper, Song, Recommandations
+from .models import Rapper, Song, Recommandations, Message
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render, get_object_or_404
@@ -23,7 +23,7 @@ def register(request):
         if profile_form.is_valid():
             profile = profile_form.save(commit=False)
             profile.save()
-            return redirect('/accounts/login/')
+            return redirect('rapper_login')
     else:
         profile_form = RapperRegisterForm()
     return render(request, 'accounts/rapper-register.html', {'profile_form': profile_form})
@@ -58,7 +58,8 @@ def rapperSongs(request):
         song_form = SongForm()
     return render(request, 'pages/rapper-songs.html', {
         'song_form': song_form,
-        'songs': songs
+        'songs': songs,
+        'rapper': current_user
         })
 
 def rapperSong(request, song_id):
@@ -73,7 +74,8 @@ def rapperSong(request, song_id):
         song_form = SongForm(instance=song)
     return render(request, 'pages/rapper-songs.html', {
         'song_form': song_form,
-        'song': song
+        'song': song,
+        'rapper' : current_user
         })
 
 def rapperSongEdit(request, song_id):
@@ -88,6 +90,7 @@ def rapperSongEdit(request, song_id):
         song_form = SongForm(instance=song)
     return render(request, 'pages/song_edit.html', {
         'song_form': song_form,
+        'rapper' : current_user
         })
 
 def rapperSongDelete(request, song_id):
@@ -152,3 +155,45 @@ class CustomLoginView(LoginView):
         else:
             # Otherwise, redirect to the user's profile page.
             return reverse_lazy('rapper-profile')
+        
+def inbox(request):
+    rapper = request.user.rapper
+    requestMessages = rapper.messages.all()
+    unreadCount = requestMessages.filter(is_read=False).count()
+    context = {
+        'rapper': rapper,
+        'massages' : requestMessages, 
+        'unreadCount' : unreadCount,
+        }
+    return render(request, 'pages/inbox.html', context)
+
+def viewMessage(request, pk):
+    rapper = request.user.rapper
+    message = get_object_or_404(Message, pk=pk)
+    if message.is_read == False:
+        message.is_read = True
+        message.save()
+
+    context = {
+        'rapper': rapper,
+        'message': message,
+    }
+    return render(request, 'pages/message.html', context)
+
+def createMessage(request, pk):
+    recipient = Rapper.objects.get(id=pk)
+    form = MessageForm()
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.recipient = recipient
+            message.sender = request.user.rapper
+            message.save()
+            return redirect('rapper-profile-view', pk=recipient.id)
+        
+    context = {
+        'recipient' : recipient,
+        'form' : form,
+    }
+    return render(request, 'pages/message-form.html', context)

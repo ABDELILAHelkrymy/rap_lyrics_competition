@@ -8,73 +8,149 @@
 {% endblock overlay %}
 
 {% block content %}
-  <div class="container-fluid py-4">
-    
-    <div class="row">
-      <div class="col-md-7 mt-4">
-        <div class="card">
-          <div class="card-header pb-0 px-3">
-            <div class="row">
-              <div class="col-md-6">
-                <h6 class="mb-0">Your Songs lyrics</h6>
-              </div>
-              <div class="col-6 text-end">
-                <button type="button" class="btn bg-gradient-dark mb-0" data-bs-toggle="modal" data-bs-target="#newSongsModal" data-bs-whatever="@mdo">Add New Song lyrics</button>
-              </div>
-              
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header pb-0 px-3">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="mb-0">Your Songs lyrics</h6>
             </div>
-          </div>
-          <div class="modal fade" id="newSongsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">New Song lyrics</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <form method="post">
-                    {% csrf_token %}
-                    {% for field in song_form %}
-                    <div class="mb-3">
-                      {{field}}
-                    </div>
-                    {% endfor %}
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+            <div class="col-6 text-end">
+              <button type="button" class="btn bg-gradient-dark mb-0" data-bs-toggle="modal" data-bs-target="#newSongsModal" data-bs-whatever="@mdo">Add New Song lyrics</button>
             </div>
-          </div>
-          <div class="card-body pt-4 p-3">
-            <ul class="list-group">
-
-              {% for song in songs %}
-              <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
-                <div class="col-md-8 d-flex flex-column">
-                  <h6 class="mb-3 text-sm">{{song.title}}</h6>
-                  <p>{{song.lyrics}}</p>
-                </div>
-                <div class="col-md-4 ms-auto text-end">
-                  <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="{% url 'delete_song' song.id %}"><i class="far fa-trash-alt me-2"></i>Delete</a>
-                  <a href="{% url 'edit_song' song.id %}" class="btn btn-link text-dark px-3 mb-0" data-bs-whatever="@mdo"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a>
-                </div>
-              </li>
-              
-              {% endfor %}
-            </ul>
+            
           </div>
         </div>
+        <div class="modal fade" id="newSongsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Song lyrics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form method="post">
+                  {% csrf_token %}
+                  {% for field in song_form %}
+                  <div class="mb-3">
+                    {{field}}
+                  </div>
+                  {% endfor %}
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body pt-4 p-3">
+          <ul class="list-group">
+
+            {% for song in songs %}
+            <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+              <div class="col-md-8 d-flex flex-column">
+                <h6 class="mb-3 text-sm">{{song.title}}</h6>
+                <p>{{song.lyrics}}</p>
+              </div>
+              <div class="col-md-4 ms-auto text-end">
+                <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="{% url 'delete_song' song.id %}"><i class="far fa-trash-alt me-2"></i>Delete</a>
+                <a href="{% url 'edit_song' song.id %}" class="btn btn-link text-dark px-3 mb-0" data-bs-whatever="@mdo"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a>
+              </div>
+            </li>
+            
+            {% endfor %}
+          </ul>
+        </div>
+
       </div>
-      <div class="modal fade" id="modal-book">
-        <div class="modal-dialog">
-          <div class="modal-content"></div>
+      
+    </div>
+    <div class="col-md-4">
+      <div class="card card-profile">
+        <img src="{% static 'img/bg-profile.jpg' %}" alt="Image placeholder" class="card-img-top">
+        <div class="row justify-content-center">
+          <div class="col-4 col-lg-4 order-lg-2">
+            <div class="mt-n4 mt-lg-n6 mb-4 mb-lg-0">
+              <a href="javascript:;">
+                <img src="{{ rapper.imageURL}}" class="rounded-circle img-fluid border border-2 border-white">
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
+          <div class="d-flex justify-content-between">
+            {% if request.user.is_authenticated and request.user.username == rapper.username %}
+            <a href="{% url 'rapper-songs' %}" class="btn btn-sm btn-info mb-0 d-none d-lg-block">Songs</a>
+            <a href="{% url 'rapper-profile-view' rapper.id %}" class="btn btn-sm btn-info mb-0 d-none d-lg-block">profile</i></a>
+            <a href="{% url 'rapper_inbox' %}" class="btn btn-sm btn-dark float-center mb-0 d-none d-lg-block">Inbox</a>
+            {% else %}
+            <a href="javascript:;" class="btn btn-sm btn-info mb-0 d-none d-lg-block">Connect</a>
+            <a href="javascript:;" class="btn btn-sm btn-info mb-0 d-block d-lg-none"><i class="ni ni-collection"></i></a>
+            <a href="javascript:;" class="btn btn-sm btn-dark float-right mb-0 d-none d-lg-block">Message</a>
+            {% endif %}
+            <a href="javascript:;" class="btn btn-sm btn-dark float-right mb-0 d-block d-lg-none"><i class="ni ni-email-83"></i></a>
+          </div>
+        </div>
+        <div class="card-body pt-0">
+          <div class="row">
+            <div class="col">
+              <div class="d-flex justify-content-center">
+                <div class="d-grid text-center">
+                  <span class="text-lg font-weight-bolder">22</span>
+                  <span class="text-sm opacity-8">Friends</span>
+                </div>
+                <div class="d-grid text-center mx-4">
+                  <span class="text-lg font-weight-bolder">10</span>
+                  <span class="text-sm opacity-8">Photos</span>
+                </div>
+                <div class="d-grid text-center">
+                  <span class="text-lg font-weight-bolder">89</span>
+                  <span class="text-sm opacity-8">Comments</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <h5>
+                {{ rapper.first_name}} {{ rapper.last_name }}
+            </h5>
+            <div class="h6 font-weight-300">
+              <i class="ni location_pin mr-2"></i>Bucharest, Romania
+            </div>
+            <div class="h6 mt-4">
+              <i class="ni business_briefcase-24 mr-2"></i>{{rapper.bio}}
+            </div>
+            <div>
+              <i class="ni education_hat mr-2"></i>{{rapper.awards}}
+            </div>
+          </div>
+          <div>
+            <div class="pt-0">
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex justify-content-center">
+                    <div class="d-grid text-center">
+                      <span class="text-lg font-weight-bolder"><a href="{% firstof rapper.social_youtube "#" %}"><i class="fa fa-youtube" aria-hidden="true"></i></a></span>
+                    </div>
+                    <div class="d-grid text-center mx-4">
+                      <span class="text-lg font-weight-bolder"><a href="{% firstof rapper.social_twitter "#" %}"><i class="fa fa-twitter-square" aria-hidden="true"></i></a></span>
+                    </div>
+                    <div class="d-grid text-center">
+                      <span class="text-lg font-weight-bolder"><a href="{% firstof rapper.social_website "#" %}"><i class="fa fa-globe" aria-hidden="true"></i></a></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
         </div>
       </div>
     </div>
-    {% include 'includes/footer.html' %}
   </div>
-
+  {% include 'includes/footer.html' %}
+</div>
+</div>
   {% endblock content %}

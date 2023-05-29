@@ -150,9 +150,15 @@
             </div>
             <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
               <div class="d-flex justify-content-between">
+                {% if request.user.is_authenticated and request.user.username == rapper.username %}
+                <a href="{% url 'rapper-songs' %}" class="btn btn-sm btn-info mb-0 d-none d-lg-block">Songs</a>
+                <a href="{% url 'rapper-profile-view' rapper.id %}" class="btn btn-sm btn-info mb-0 d-none d-lg-block">profile</i></a>
+                <a href="{% url 'rapper_inbox' %}" class="btn btn-sm btn-dark float-center mb-0 d-none d-lg-block">Inbox</a>
+                {% else %}
                 <a href="javascript:;" class="btn btn-sm btn-info mb-0 d-none d-lg-block">Connect</a>
                 <a href="javascript:;" class="btn btn-sm btn-info mb-0 d-block d-lg-none"><i class="ni ni-collection"></i></a>
                 <a href="javascript:;" class="btn btn-sm btn-dark float-right mb-0 d-none d-lg-block">Message</a>
+                {% endif %}
                 <a href="javascript:;" class="btn btn-sm btn-dark float-right mb-0 d-block d-lg-none"><i class="ni ni-email-83"></i></a>
               </div>
             </div>

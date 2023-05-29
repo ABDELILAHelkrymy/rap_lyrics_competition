@@ -18,22 +18,43 @@
           <div class="card">
             <div class="card-header pb-0">
               <div class="d-flex align-items-center">
-                <p class="mb-0">Edit Profile</p>
-                <button class="btn btn-primary btn-sm ms-auto">Settings</button>
+                <p class="mb-0">Inbox</p>
               </div>
             </div>
             <div class="card-body">
-              <p class="text-uppercase text-sm">User Informations</p>
+              <p class="text-uppercase text-sm"><h6>Massages({{unreadCount}})</h6></p>
               <div class="row">
-                <form action="" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {% for field in profile_form %}
-                        <div class="form-group">
-                            {{field}}
-                        </div>
-                    {% endfor %}
-                    <input class="btn btn-primary btn-sm ms-auto" type="submit" value="Submit">
-                </form>
+                <table class="table">
+                    <tbody>
+                      {% for message in massages %}
+                      <tr>
+                        <td>
+                            <a href="{% url 'single_message' message.id %}">
+                                <div class="d-flex px-2 py-1">
+                                    <div>
+                                        <img src="{{ message.sender.imageURL}}" class="avatar avatar-sm me-3" alt="user1">
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <h6 class="mb-0 text-sm">{{ message.sender}}</h6>
+                                    </div>
+                                </div>
+                            </a>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                          <h5>{{ message.subject }}</h5>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                          <span class="">{{ message.created }}</span>
+                        </td>
+                        <td>
+                            {% if message.is_read == False %}
+                                <p>"*"</p>
+                            {% endif %}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
               </div>
             </div>
           </div>

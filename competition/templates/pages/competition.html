@@ -1,0 +1,69 @@
+{% extends "layouts/base.html" %}
+{% load i18n static %}
+
+{% block title %} Competition {% endblock title %}
+
+{% block overlay %}
+  <div class="position-absolute w-100 min-height-300 top-0" style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/profile-layout-header.jpg'); background-position-y: 50%;">
+    <span class="mask bg-primary opacity-6"></span>
+  </div>
+{% endblock overlay %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+    
+    <div class="row">
+      <div class="col-md-7 mt-4">
+        <div class="card">
+          <div class="card-header pb-0 px-3">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="mb-0">{{competition.name}}</h6>
+              </div>
+              <div class="col-6 text-end">
+                {% if competition_entries|length != 0 %}
+                {% with competition_entries.all|first as pk %}
+                  <a href="{% url 'leave-competition' pk.id %}" class="btn bg-gradient-dark mb-0">Leave</a>
+                {% endwith %}
+                {% else %}
+                    <a href="{% url 'join-competition' competition.id %}" class="btn bg-gradient-dark mb-0">Join</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="card-body pt-4 p-3">
+            
+          
+          </div>
+        </div>
+        <div class="row">
+        {% for c in competition_entries_by_comp%}
+              <div class="col-md-3 mt-4">
+                <div class="card card-profile mt-md-0 mt-5">
+                  <a href="{% url 'rapper-profile-view' c.rapper.id  %}">
+                    <div class="p-3">
+                      <img class="w-100 border-radius-md" src="{{c.rapper.imageURL}}">
+                    </div>
+                  </a>
+                  <div class="card-body blur justify-content-center text-center mx-4 mb-4 border-radius-md">
+                    <h4 class="mb-0">{{c.rapper.first_name}}</h4>
+                    <p>Atlanta, U.S.</p>
+                    <div class="row justify-content-center text-center">
+                      <div class="col-12 mx-auto">
+                        <h5 class="text-info mb-0">{{c.rapper.song_set.count}}</h5>
+                        <small>Songs</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        {% endfor %}
+      </div>
+      </div>
+      
+    </div>
+
+  {% include 'includes/footer.html' %}
+</div>
+{% endblock content %}

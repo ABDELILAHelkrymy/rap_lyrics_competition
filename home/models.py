@@ -4,6 +4,9 @@ import uuid
 from django.utils import timezone
 from django.db.models.signals import post_save
 
+from django.core.mail import send_mail
+from django.conf import settings
+
 class Rapper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='rapper')
     first_name = models.CharField(max_length=30)
@@ -39,7 +42,6 @@ class Rapper(models.Model):
 class Recommandations(models.Model):
     owner = models.ForeignKey(Rapper, on_delete=models.CASCADE, related_name='given_recommendations')
     rapper = models.ForeignKey(Rapper, on_delete=models.CASCADE, related_name='received_recommendations')
-    competition = models.ForeignKey('competition.CompetitionEntry', on_delete=models.CASCADE, related_name='recommendations_com', null=True)
     recommandations = models.TextField(max_length=500, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
@@ -64,9 +66,27 @@ class Song(models.Model):
         default=uuid.uuid4, unique=True,
         primary_key=True, editable=False)
 
-    def __str__(self):
+    def __str__(self): 
         return self.title
     
+class Message(models.Model):
+    sender = models.ForeignKey(Rapper, on_delete=models.SET_NULL, null=True, blank=True)
+    recipient  = models.ForeignKey(Rapper, on_delete=models.SET_NULL, null=True, blank=True, related_name="messages")
+    name = models.CharField(max_length=200, null=True, blank=True)
+    email = models.EmailField(max_length=200, null=True, blank=True)
+    subject = models.CharField(max_length=200, null=True, blank=True)
+    message = models.TextField()  
+    is_read = models.BooleanField(default=False, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    id = models.UUIDField(
+        default=uuid.uuid4, unique=True,
+        primary_key=True, editable=False)
+    
+    def __str__(self): 
+        return self.subject
+    
+    class Meta:
+        ordering = ["is_read","-created"]
 
 # @receiver(post_save, sender=Profile)
 def createProfile(sender, instance, created, **kwargs):
@@ -79,5 +99,15 @@ def createProfile(sender, instance, created, **kwargs):
             email = user.email,
             first_name = user.first_name,
         )
+
+        subject = 'Welcome to Rap lyrics competitons'
+        message = 'We are glad you are here!'
+        send_mail(
+            subject, 
+            message, 
+            settings.EMAIL_HOST_USER, 
+            [rapper.email],
+            fail_silently=False
+            )
 
 post_save.connect(createProfile, sender=User)
